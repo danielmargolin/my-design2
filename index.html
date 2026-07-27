@@ -27,21 +27,49 @@
     html,
     body {
       margin: 0;
+      min-height: 100%;
       background: var(--background);
       color: var(--ink);
       font-family: "Heebo", ui-sans-serif, system-ui, sans-serif;
     }
 
     body {
-      overscroll-behavior-y: none;
+      overscroll-behavior-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    main {
+      position: relative;
     }
 
     .sequence {
       position: relative;
+      height: 100vh;
       height: 100svh;
       min-height: 420px;
       overflow: hidden;
       background: var(--background);
+    }
+
+    /*
+     * Mobile browsers resize their visual viewport as their toolbars open and
+     * close. A native sticky stage keeps scrolling owned by the browser while
+     * 100dvh makes the visible content fit between those live browser bars.
+     */
+    @media (max-width: 720px), (hover: none) and (pointer: coarse) {
+      main {
+        height: 600vh;
+        height: 600svh;
+      }
+
+      .sequence {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+        touch-action: pan-y;
+      }
     }
 
     .sequence__canvas,
@@ -422,26 +450,14 @@
       }
     }
 
-    @media (max-width: 720px) {
+    @media (max-width: 720px), (hover: none) and (pointer: coarse) {
       .sequence__next {
-        /* Safari iOS bottom chrome (~44–50px) + home indicator — keep CTA above both */
-        bottom: max(72px, calc(env(safe-area-inset-bottom, 0px) + 64px));
+        /* The 100dvh stage already ends above the live browser toolbar. */
+        position: absolute;
+        bottom: max(20px, calc(env(safe-area-inset-bottom, 0px) + 16px));
         min-height: 50px;
         padding: 15px 32px;
         font-size: 15px;
-      }
-    }
-
-    @supports (height: 100dvh) {
-      @media (max-width: 720px) {
-        .sequence__next {
-          /* Prefer dynamic viewport: sit above the live browser chrome */
-          bottom: max(
-            72px,
-            calc(env(safe-area-inset-bottom, 0px) + 64px),
-            calc(100lvh - 100dvh + env(safe-area-inset-bottom, 0px) + 20px)
-          );
-        }
       }
     }
 
@@ -722,6 +738,9 @@
 
       const FRAME_COUNT = 300;
       const SCROLL_LENGTH = 5; // Viewport heights used by the pinned sequence.
+      const mobileViewport = window.matchMedia(
+        "(max-width: 720px), (hover: none) and (pointer: coarse)"
+      );
       const framesFolder = window.matchMedia("(max-width: 720px)").matches
         ? "frames-mobile"
         : "frames2";
@@ -729,6 +748,7 @@
         `${framesFolder}/ezgif-frame-${String(index + 1).padStart(3, "0")}.jpg`;
 
       const section = document.querySelector("#image-sequence");
+      const main = section.closest("main");
       const canvas = section.querySelector(".sequence__canvas");
       const context = canvas.getContext("2d", { alpha: false });
       const fallback = section.querySelector(".sequence__fallback");
@@ -755,6 +775,8 @@
       let resizeFrame = 0;
       let sequenceTween = null;
       let scrollTween = null;
+      let layoutWidth = window.innerWidth;
+      let viewportResizeTimer = 0;
 
       function sizeCanvas() {
         const width = section.clientWidth;
@@ -955,12 +977,14 @@
           snap: "frame",
           onUpdate: render,
           scrollTrigger: {
-            trigger: section,
+            trigger: mobileViewport.matches ? main : section,
             start: "top top",
-            end: () => `+=${window.innerHeight * SCROLL_LENGTH}`,
-            pin: true,
+            end: mobileViewport.matches
+              ? "bottom bottom"
+              : () => `+=${window.innerHeight * SCROLL_LENGTH}`,
+            pin: !mobileViewport.matches,
             scrub: 0.35,
-            anticipatePin: 1,
+            anticipatePin: mobileViewport.matches ? 0 : 1,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
               section.classList.toggle("is-complete", self.progress > 0.96);
@@ -973,17 +997,36 @@
       }
 
       function handleResize() {
+        const widthChanged = Math.abs(window.innerWidth - layoutWidth) > 1;
+
+        if (mobileViewport.matches && !widthChanged) {
+          // Let the browser finish animating its toolbar before reallocating
+          // the canvas backing store. Its CSS size follows 100dvh meanwhile.
+          window.clearTimeout(viewportResizeTimer);
+          viewportResizeTimer = window.setTimeout(() => {
+            sizeCanvas();
+            lastDrawnFrame = -1;
+            render(true);
+          }, 160);
+          return;
+        }
+
+        layoutWidth = window.innerWidth;
         cancelAnimationFrame(resizeFrame);
         resizeFrame = requestAnimationFrame(() => {
           sizeCanvas();
           lastDrawnFrame = -1;
           render(true);
+
+          // Mobile toolbar animation changes only the viewport height. Refreshing
+          // ScrollTrigger during that animation causes jumps and stalled swipes.
           window.ScrollTrigger?.refresh();
         });
       }
 
       window.addEventListener("resize", handleResize, { passive: true });
       window.addEventListener("orientationchange", handleResize, { passive: true });
+      window.visualViewport?.addEventListener("resize", handleResize, { passive: true });
 
       // ScrollTrigger is intentionally created only after every frame settles.
       Promise.all(Array.from({ length: FRAME_COUNT }, (_, index) => loadFrame(index)))
