@@ -22,6 +22,41 @@ let loadedCount = 0;
 let lastDrawnFrame = -1;
 let lastOverlayFrame = -1;
 let sequenceTrigger = null;
+let frameScrollTween = null;
+
+function getScrollY() {
+  return (
+    window.pageYOffset ||
+    document.documentElement.scrollTop ||
+    document.body.scrollTop ||
+    0
+  );
+}
+
+function setScrollY(y) {
+  window.scrollTo(0, y);
+  // Some Android WebViews only move via element scrollTop.
+  if (Math.abs(getScrollY() - y) > 1) {
+    document.documentElement.scrollTop = y;
+    document.body.scrollTop = y;
+  }
+}
+
+/**
+ * Run scroll writes with CSS scroll-behavior forced off. Native/CSS smooth
+ * scroll is unreliable on Android Chrome with pinned ScrollTriggers.
+ */
+function withInstantScroll(run) {
+  const html = document.documentElement;
+  const previous = html.style.scrollBehavior;
+  html.style.scrollBehavior = "auto";
+
+  try {
+    run();
+  } finally {
+    html.style.scrollBehavior = previous;
+  }
+}
 
 /**
  * Overlay frame ranges — single source of truth (1-based, inclusive).
@@ -112,20 +147,76 @@ document.addEventListener("keydown", (event) => {
 });
 
 /**
+ * Scroll position for a 1-based frame. Re-read start/end each call so
+ * mobile chrome / refresh cannot leave us with a stale target.
+ */
+function getScrollYForFrame(frameNumber) {
+  if (!sequenceTrigger) {
+    return getScrollY();
+  }
+
+  const frameIndex = Math.max(0, Math.min(FRAME_COUNT - 1, frameNumber - 1));
+  const progress = frameIndex / (FRAME_COUNT - 1);
+  const { start, end } = sequenceTrigger;
+
+  return start + (end - start) * progress;
+}
+
+/**
  * Scroll the sequence so playhead lands on a 1-based frame number.
+ * Uses a GSAP-driven scroll (not native smooth scroll) — Android Chrome
+ * often fails or lands on the wrong frame with pin + scrub + URL-bar resize.
  */
 function scrollToFrame(frameNumber) {
   if (!sequenceTrigger) {
     return;
   }
 
-  const frameIndex = Math.max(0, Math.min(FRAME_COUNT - 1, frameNumber - 1));
-  const progress = frameIndex / (FRAME_COUNT - 1);
-  const scrollY =
-    sequenceTrigger.start +
-    (sequenceTrigger.end - sequenceTrigger.start) * progress;
+  if (frameScrollTween) {
+    frameScrollTween.kill();
+    frameScrollTween = null;
+  }
 
-  window.scrollTo({ top: scrollY, behavior: "smooth" });
+  // Keep start/end current before measuring the jump target.
+  ScrollTrigger.refresh();
+
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  const startY = getScrollY();
+  const targetY = () => getScrollYForFrame(frameNumber);
+
+  if (reducedMotion) {
+    withInstantScroll(() => setScrollY(targetY()));
+    return;
+  }
+
+  const initialTarget = targetY();
+  const distance = Math.abs(initialTarget - startY);
+  const duration = Math.min(1.6, Math.max(0.55, distance / 2200));
+  const state = { t: 0 };
+  const html = document.documentElement;
+  const previousBehavior = html.style.scrollBehavior;
+  html.style.scrollBehavior = "auto";
+
+  frameScrollTween = gsap.to(state, {
+    t: 1,
+    duration,
+    ease: "power2.inOut",
+    overwrite: true,
+    onUpdate: () => {
+      // Recompute target while tweening — pin range can shift on mobile.
+      setScrollY(startY + (targetY() - startY) * state.t);
+    },
+    onComplete: () => {
+      setScrollY(targetY());
+      html.style.scrollBehavior = previousBehavior;
+      frameScrollTween = null;
+    },
+    onInterrupt: () => {
+      html.style.scrollBehavior = previousBehavior;
+    }
+  });
 }
 
 /**
@@ -235,6 +326,9 @@ function startSequence() {
   }
 
   gsap.registerPlugin(ScrollTrigger);
+  // Avoid URL-bar show/hide on Android Chrome invalidating pin start/end
+  // mid-jump (that lands the CTA on the wrong frame).
+  ScrollTrigger.config({ ignoreMobileResize: true });
   resizeCanvas();
   sequence.classList.add("is-ready");
 
@@ -249,7 +343,8 @@ function startSequence() {
       end: () => `+=${window.innerHeight * 5}`,
       pin: stage,
       scrub: 0.5,
-      invalidateOnRefresh: true
+      invalidateOnRefresh: true,
+      anticipatePin: 1
     }
   });
 
