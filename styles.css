@@ -504,7 +504,24 @@ body {
     height: 2.7rem;
   }
 
+  /*
+   * Android Chrome hides/shows the URL bar while scrolling, which grows the
+   * visual viewport past 100svh. GSAP pin locks a pixel height and leaves a
+   * black gap (and can shove the fixed nav). Native sticky + 100dvh keeps the
+   * stage flush with the live viewport without fighting the browser chrome.
+   */
+  .sequence {
+    height: 600svh;
+    min-height: 0;
+  }
+
   .sequence__stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    touch-action: pan-y;
     background-image: url("frames-mobile/ezgif-frame-001.jpg");
   }
 

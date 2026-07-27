@@ -23,6 +23,8 @@ let lastDrawnFrame = -1;
 let lastOverlayFrame = -1;
 let sequenceTrigger = null;
 let frameScrollTween = null;
+let layoutWidth = window.innerWidth;
+let viewportResizeTimer = 0;
 
 function getScrollY() {
   return (
@@ -356,21 +358,44 @@ function startSequence() {
     scrollTrigger: {
       trigger: sequence,
       start: "top top",
-      end: () => `+=${window.innerHeight * 5}`,
-      pin: stage,
+      // Mobile uses CSS sticky + a tall sequence; pin fights Android chrome.
+      end: isMobile
+        ? "bottom bottom"
+        : () => `+=${window.innerHeight * 5}`,
+      pin: isMobile ? false : stage,
       scrub: 0.5,
       invalidateOnRefresh: true,
-      anticipatePin: 1
+      anticipatePin: isMobile ? 0 : 1
     }
   });
 
   sequenceTrigger = tween.scrollTrigger;
 }
 
+function handleResize() {
+  const widthChanged = Math.abs(window.innerWidth - layoutWidth) > 1;
+
+  if (isMobile && !widthChanged) {
+    // Toolbar show/hide only changes height — debounce canvas realloc so the
+    // URL-bar animation can finish without thrashing.
+    window.clearTimeout(viewportResizeTimer);
+    viewportResizeTimer = window.setTimeout(() => {
+      resizeCanvas();
+    }, 160);
+    return;
+  }
+
+  layoutWidth = window.innerWidth;
+  resizeCanvas();
+}
+
 Promise.all(Array.from({ length: FRAME_COUNT }, (_, index) => loadFrame(index)))
   .then(startSequence);
 
-window.addEventListener("resize", resizeCanvas);
+window.addEventListener("resize", handleResize, { passive: true });
+window.visualViewport?.addEventListener("resize", handleResize, {
+  passive: true
+});
 
 window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).addEventListener(
   "change",
