@@ -20,6 +20,63 @@ const playhead = { frame: 0 };
 
 let loadedCount = 0;
 let lastDrawnFrame = -1;
+let lastOverlayFrame = -1;
+
+/**
+ * Overlay frame ranges — single source of truth (1-based, inclusive).
+ * `from` is the scroll target for jump-to-overlay buttons.
+ * Markup: add .overlay with matching id under .sequence__overlays.
+ */
+const OVERLAY_FRAMES = {
+  "overlay-lets-go": { from: 1, to: 40 },
+  "overlay-example-b": { from: 150, to: 210 }
+};
+
+/**
+ * Overlay registry — ranges from OVERLAY_FRAMES, applied to matching DOM nodes.
+ */
+const overlays = Object.entries(OVERLAY_FRAMES).flatMap(([id, range]) => {
+  const element = document.getElementById(id);
+  const { from, to } = range;
+
+  if (!element) {
+    console.warn("[overlays] missing element for", id);
+    return [];
+  }
+
+  if (!Number.isFinite(from) || !Number.isFinite(to) || from > to) {
+    console.warn("[overlays] invalid range for", id, range);
+    return [];
+  }
+
+  element.dataset.from = String(from);
+  element.dataset.to = String(to);
+
+  return [{ id, element, from, to }];
+});
+
+function syncOverlays(frameIndex) {
+  // playhead is 0-based; OVERLAY_FRAMES from/to are 1-based frame file numbers
+  const frameNumber = frameIndex + 1;
+
+  if (frameNumber === lastOverlayFrame) {
+    return;
+  }
+
+  lastOverlayFrame = frameNumber;
+
+  for (const { element, from, to } of overlays) {
+    const isActive = frameNumber >= from && frameNumber <= to;
+    const wasActive = element.classList.contains("is-active");
+
+    if (isActive === wasActive) {
+      continue;
+    }
+
+    element.classList.toggle("is-active", isActive);
+    element.setAttribute("aria-hidden", String(!isActive));
+  }
+}
 
 function setMenuOpen(isOpen) {
   header.classList.toggle("is-menu-open", isOpen);
@@ -82,6 +139,9 @@ function resizeCanvas() {
 
 function renderFrame() {
   const frameIndex = Math.round(playhead.frame);
+
+  syncOverlays(frameIndex);
+
   const image = frames[frameIndex];
 
   if (!image?.complete || !image.naturalWidth || frameIndex === lastDrawnFrame) {

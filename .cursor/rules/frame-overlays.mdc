@@ -1,0 +1,21 @@
+---
+description: Maintain frame-sequence overlays — content, timing (data-from/to), and scoped styles. Read OVERLAYS.md first.
+globs: OVERLAYS.md,index.html,styles.css,script.js
+alwaysApply: false
+---
+
+# Frame overlays
+
+Before changing overlays, read and follow [OVERLAYS.md](../../OVERLAYS.md).
+
+## Quick facts
+
+- Overlays live in `index.html` → `.sequence__overlays` (unique `id` per overlay)
+- Timing: `OVERLAY_FRAMES` in `script.js` (`from` / `to`, 1–300 inclusive = `ezgif-frame-NNN.jpg`); `from` is the jump-to-overlay scroll target
+- Style: shared under `/* —— Frame overlays —— */`; per-overlay via `#overlay-…`
+- Engine sync is in `script.js` — leave alone unless extending the system
+- Copy is Hebrew / RTL
+
+## Agent job
+
+Help the user maintain overlay **content**, **timing**, and **style**. Content/look → HTML + CSS; timing → `OVERLAY_FRAMES`. Inventory existing overlays before editing. Scope new CSS to the overlay id. Do not break the canvas sequence or ScrollTrigger setup.

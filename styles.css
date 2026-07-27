@@ -170,11 +170,14 @@ body {
   outline-offset: 3px;
 }
 
+#overlay-lets-go {
+  align-items: flex-end;
+  padding-bottom: 12vh;
+}
+
 .floating-cta {
-  position: fixed;
-  z-index: 25;
-  bottom: 12vh;
-  left: 50%;
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   min-width: 12.5rem;
   min-height: 4.25rem;
@@ -196,7 +199,6 @@ body {
   letter-spacing: 0.06em;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  transform: translateX(-50%);
   animation: cta-arrive 700ms 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
   transition:
     border-color 200ms ease,
@@ -252,12 +254,12 @@ body {
 @keyframes cta-arrive {
   from {
     opacity: 0;
-    transform: translate(-50%, 1.25rem);
+    transform: translateY(1.25rem);
   }
 
   to {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translateY(0);
   }
 }
 
@@ -290,6 +292,70 @@ body {
 
 .sequence.is-ready .sequence__canvas {
   opacity: 1;
+}
+
+/* —— Frame overlays ——
+   Add a new .overlay in HTML with data-from / data-to.
+   Style each one via its #id or a dedicated class — keep designs isolated. */
+.sequence__overlays {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.25rem, 4vw, 3rem);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms ease;
+}
+
+.overlay.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.overlay__content {
+  max-width: 28rem;
+  color: var(--warm-white);
+  text-align: center;
+  text-shadow: 0 2px 24px rgb(0 0 0 / 55%);
+}
+
+.overlay__content--bottom {
+  align-self: flex-end;
+  margin-bottom: 12vh;
+}
+
+.overlay__eyebrow {
+  margin: 0 0 0.5rem;
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.overlay__title {
+  margin: 0 0 0.65rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.overlay__text {
+  margin: 0;
+  color: rgb(243 240 233 / 82%);
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.55;
 }
 
 .sequence__loader {
@@ -441,6 +507,14 @@ body {
   .sequence__stage {
     background-image: url("frames-mobile/ezgif-frame-001.jpg");
   }
+
+  .overlay {
+    padding: 1rem 1.15rem;
+  }
+
+  .overlay__content--bottom {
+    margin-bottom: 18vh;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -463,5 +537,9 @@ body {
 
   .sequence__spinner {
     animation: none;
+  }
+
+  .overlay {
+    transition: none;
   }
 }
