@@ -61,6 +61,19 @@ function withInstantScroll(run) {
   }
 }
 
+function resetSequenceToStart() {
+  playhead.frame = 0;
+  lastDrawnFrame = -1;
+  withInstantScroll(() => setScrollY(0));
+}
+
+// Browsers normally restore the previous scroll position on refresh, which
+// would initialize ScrollTrigger on a later frame.
+if ("scrollRestoration" in window.history) {
+  window.history.scrollRestoration = "manual";
+}
+resetSequenceToStart();
+
 /**
  * Overlay frame ranges — single source of truth (1-based, inclusive).
  * `from` is the scroll target for jump-to-overlay buttons.
@@ -349,6 +362,7 @@ function startSequence() {
   // Avoid URL-bar show/hide on Android Chrome invalidating pin start/end
   // mid-jump (that lands the CTA on the wrong frame).
   ScrollTrigger.config({ ignoreMobileResize: true });
+  resetSequenceToStart();
   resizeCanvas();
   sequence.classList.add("is-ready");
 
