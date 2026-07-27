@@ -1,0 +1,92 @@
+:root {
+  color-scheme: dark;
+  background: #050505;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: #050505;
+}
+
+.sequence,
+.sequence__stage {
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  min-height: 420px;
+}
+
+.sequence {
+  position: relative;
+}
+
+.sequence__stage {
+  position: relative;
+  overflow: hidden;
+  background:
+    #050505 center / cover no-repeat
+    url("frames-desktop/ezgif-frame-001.jpg");
+}
+
+.sequence__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.sequence.is-ready .sequence__canvas {
+  opacity: 1;
+}
+
+.sequence__loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: rgb(5 5 5 / 35%);
+  color: #fff;
+  font: 500 0.875rem/1.2 system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  transition: opacity 250ms ease, visibility 250ms ease;
+}
+
+.sequence.is-ready .sequence__loader {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.sequence__spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgb(255 255 255 / 30%);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@media (max-width: 767px) {
+  .sequence__stage {
+    background-image: url("frames-mobile/ezgif-frame-001.jpg");
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sequence__spinner {
+    animation: none;
+  }
+}
