@@ -6,6 +6,10 @@ const stage = document.querySelector(".sequence__stage");
 const canvas = document.querySelector(".sequence__canvas");
 const status = document.querySelector(".sequence__status");
 const context = canvas.getContext("2d");
+const header = document.querySelector(".site-header");
+const menuToggle = document.querySelector(".menu-toggle");
+const navigation = document.querySelector(".site-nav");
+const floatingCta = document.querySelector(".floating-cta");
 
 const isMobile = window.matchMedia(
   `(max-width: ${MOBILE_BREAKPOINT}px)`
@@ -16,6 +20,45 @@ const playhead = { frame: 0 };
 
 let loadedCount = 0;
 let lastDrawnFrame = -1;
+
+function setMenuOpen(isOpen) {
+  header.classList.toggle("is-menu-open", isOpen);
+  menuToggle.setAttribute("aria-expanded", String(isOpen));
+  menuToggle.setAttribute(
+    "aria-label",
+    isOpen ? "Close navigation menu" : "Open navigation menu"
+  );
+}
+
+menuToggle.addEventListener("click", () => {
+  setMenuOpen(menuToggle.getAttribute("aria-expanded") !== "true");
+});
+
+navigation.addEventListener("click", (event) => {
+  if (event.target.closest("a")) {
+    setMenuOpen(false);
+  }
+});
+
+document.addEventListener("click", (event) => {
+  if (!header.contains(event.target)) {
+    setMenuOpen(false);
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    setMenuOpen(false);
+    menuToggle.focus();
+  }
+});
+
+floatingCta.addEventListener("click", () => {
+  window.scrollBy({
+    top: window.innerHeight * 0.85,
+    behavior: "smooth"
+  });
+});
 
 function frameUrl(index) {
   const number = String(index + 1).padStart(3, "0");
