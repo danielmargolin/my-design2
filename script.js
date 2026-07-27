@@ -247,6 +247,13 @@ function scrollToOverlay(id) {
     return;
   }
 
+  if (id === "overlay-gallery") {
+    const grid = document.querySelector("#overlay-gallery .gallery-grid");
+    if (grid) {
+      grid.scrollTop = 0;
+    }
+  }
+
   scrollToFrame(range.from);
 }
 

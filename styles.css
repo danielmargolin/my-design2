@@ -317,6 +317,7 @@ body {
 }
 
 .overlay.is-active {
+  z-index: 1;
   opacity: 1;
   pointer-events: auto;
 }
@@ -427,7 +428,7 @@ body {
 .sequence__loader-mark svg {
   width: 52%;
   fill: none;
-  stroke: currentColor;
+  stroke: var(--accent);
   stroke-dasharray: 80;
   stroke-dashoffset: 80;
   stroke-linecap: square;
