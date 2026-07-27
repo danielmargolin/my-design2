@@ -12,17 +12,23 @@
     rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="overlay-card.css">
+  <script>
+    // Must run before the browser restores scroll on refresh.
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    window.scrollTo(0, 0);
+  </script>
 </head>
 
 <body>
   <header class="site-header">
-    <a class="brand" href="#" aria-label="My Design דף הבית">
+    <a class="brand" href="#" aria-label="MY Design דף הבית">
       <svg class="brand__mark" viewBox="0 0 42 42" aria-hidden="true">
         <path d="M5 32.5V17.75L21 7l16 10.75V32.5" />
         <path d="M21 7V17" />
         <path d="M13 34V22.5L21 17l8 5.5V34" />
       </svg>
-      <span class="brand__name">My Design</span>
+      <span class="brand__name">MY Design</span>
+      <span class="brand__descriptor">Home Designing</span>
     </a>
 
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation"
@@ -40,10 +46,10 @@
         </svg>
       </a>
       <a class="site-nav__link site-nav__link--primary" href="#overlay-card" data-scroll-overlay="overlay-card">
-        <span>צרו קשר</span>
         <svg viewBox="0 0 16 16" aria-hidden="true">
           <path d="M3 8h10M9 4l4 4-4 4" />
         </svg>
+        <span>צרו קשר</span>
       </a>
     </nav>
   </header>

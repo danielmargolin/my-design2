@@ -64,15 +64,35 @@ function withInstantScroll(run) {
 function resetSequenceToStart() {
   playhead.frame = 0;
   lastDrawnFrame = -1;
+  lastOverlayFrame = -1;
   withInstantScroll(() => setScrollY(0));
 }
 
 // Browsers normally restore the previous scroll position on refresh, which
-// would initialize ScrollTrigger on a later frame.
+// would initialize ScrollTrigger on a later frame. Also re-assert on pageshow
+// (bfcache) and load, which can restore scroll after this script first runs.
 if ("scrollRestoration" in window.history) {
   window.history.scrollRestoration = "manual";
 }
 resetSequenceToStart();
+
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted || getScrollY() > 0) {
+    resetSequenceToStart();
+    if (sequenceTrigger) {
+      renderFrame();
+      ScrollTrigger.update();
+    }
+  }
+});
+
+window.addEventListener("load", () => {
+  resetSequenceToStart();
+  if (sequenceTrigger) {
+    renderFrame();
+    ScrollTrigger.update();
+  }
+});
 
 /**
  * Overlay frame ranges — single source of truth (1-based, inclusive).
@@ -464,6 +484,16 @@ function startSequence() {
   });
 
   sequenceTrigger = tween.scrollTrigger;
+
+  // Pin/layout can shift scroll after ScrollTrigger mounts — re-assert frame 0.
+  resetSequenceToStart();
+  renderFrame();
+  ScrollTrigger.update();
+  requestAnimationFrame(() => {
+    resetSequenceToStart();
+    renderFrame();
+    ScrollTrigger.update();
+  });
 }
 
 function handleResize() {
