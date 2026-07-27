@@ -474,8 +474,8 @@ body {
 .sequence__loader-title {
   font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   font-size: clamp(2.25rem, 6vw, 3.5rem);
-  font-weight: 400;
-  letter-spacing: -0.035em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   line-height: 0.9;
 }
 
