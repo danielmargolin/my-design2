@@ -7,8 +7,11 @@
   <title>My Design — אדריכלות ועיצוב פנים</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Heebo:wght@300;400;500;600;700&family=Outfit:wght@300;400;500&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="overlay-card.css">
 </head>
 
 <body>
@@ -71,12 +74,67 @@
 
           <div
             class="overlay"
-            id="overlay-example-b"
+            id="overlay-card"
             aria-hidden="true"
           >
-            <div class="overlay__content overlay__content--bottom">
-              <h2 class="overlay__title">אוברליי שני</h2>
-              <p class="overlay__text">פריימים 150–210. הוסיפו עוד .overlay לפי הצורך.</p>
+            <div class="card">
+              <header class="logo-section">
+                <div class="logo-mark" aria-hidden="true"></div>
+                <h1 class="brand-name">MY design</h1>
+                <p class="brand-tagline">עיצוב בית</p>
+              </header>
+
+              <section class="contact-section">
+                <h2>צרו קשר</h2>
+                <ul class="contact-list">
+                  <li class="contact-row-phones">
+                    <span class="contact-icon phone" aria-hidden="true"></span>
+                    <div class="contact-phones-inline">
+                      <div>
+                        <div class="contact-label">מילנה</div>
+                        <div class="contact-value"><a href="tel:+972526162323">052-616-2323</a></div>
+                      </div>
+                      <div>
+                        <div class="contact-label">יוליה</div>
+                        <div class="contact-value"><a href="tel:+972524490308">052-449-0308</a></div>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="contact-icon email" aria-hidden="true"></span>
+                    <div>
+                      <div class="contact-label">אימייל</div>
+                      <div class="contact-value"><a href="mailto:mydisign29@gmail.com">mydisign29@gmail.com</a></div>
+                    </div>
+                  </li>
+                  <li class="contact-row-phones">
+                    <span class="contact-icon whatsapp" aria-hidden="true"></span>
+                    <div class="contact-phones-wrap">
+                      <div class="contact-label">ווטסאפ</div>
+                      <div class="contact-phones-inline">
+                        <div>
+                          <div class="contact-value">
+                            <a class="contact-wa-link" href="https://wa.me/972526162323" target="_blank" rel="noopener"
+                              aria-label="שלח הודעה בוווטסאפ למילנה">
+                              <span class="contact-wa-link-icon" aria-hidden="true"></span>
+                              מילנה
+                            </a>
+                          </div>
+                        </div>
+                        <div>
+                          <div class="contact-value">
+                            <a class="contact-wa-link" href="https://wa.me/972524490308" target="_blank" rel="noopener"
+                              aria-label="שלח הודעה בוווטסאפ ליוליה">
+                              <span class="contact-wa-link-icon" aria-hidden="true"></span>
+                              יוליה
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </section>
             </div>
           </div>
         </div>

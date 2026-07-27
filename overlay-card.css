@@ -1,0 +1,382 @@
+/* Floating portrait / glass contact object for the living-room sequence. */
+
+#overlay-card {
+  --card-ink: #f7f2e9;
+  --card-muted: rgb(247 242 233 / 62%);
+  --card-line: rgb(255 255 255 / 14%);
+  --card-brass: #e1bd87;
+  align-items: center;
+  justify-content: center;
+  padding: 7rem clamp(2rem, 5vw, 6rem) 2.5rem;
+  color: var(--card-ink);
+  direction: rtl;
+  font-family: Heebo, "Helvetica Neue", sans-serif;
+  perspective: 1600px;
+  text-align: right;
+}
+
+#overlay-card .card {
+  position: relative;
+  display: grid;
+  isolation: isolate;
+  width: min(72vw, 50rem);
+  min-height: 24rem;
+  grid-template-columns: minmax(22rem, 1.35fr) minmax(18rem, 0.9fr);
+  margin-right: auto;
+  border: 1px solid rgb(255 255 255 / 28%);
+  border-radius: 1.5rem 0.2rem 1.5rem 0.2rem;
+  background: rgb(18 17 15 / 12%);
+  box-shadow:
+    2rem 2.5rem 4rem rgb(12 10 8 / 38%),
+    0 5rem 7rem rgb(12 10 8 / 25%),
+    inset 0 1px 0 rgb(255 255 255 / 24%);
+  opacity: 0;
+  transform: translate3d(-2.5rem, 1.5rem, 0) rotateY(9deg) rotateX(2deg);
+  transform-origin: left center;
+  backdrop-filter: blur(18px) saturate(115%);
+  -webkit-backdrop-filter: blur(18px) saturate(115%);
+  transition:
+    opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 800ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 400ms ease;
+}
+
+#overlay-card.is-active .card {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) rotateY(-2deg) rotateX(0.8deg);
+}
+
+#overlay-card .card:hover {
+  box-shadow:
+    2.25rem 3rem 5rem rgb(12 10 8 / 42%),
+    0 5.5rem 8rem rgb(12 10 8 / 28%),
+    inset 0 1px 0 rgb(255 255 255 / 30%);
+  transform: translate3d(0, -0.55rem, 1rem) rotateY(-0.7deg) rotateX(0);
+}
+
+#overlay-card .card::before {
+  position: absolute;
+  z-index: -1;
+  inset: 1rem -1.1rem -1rem 1.1rem;
+  border: 1px solid rgb(255 255 255 / 13%);
+  border-radius: inherit;
+  background: rgb(255 255 255 / 5%);
+  content: "";
+  transform: translateZ(-2rem);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+#overlay-card .card::after {
+  position: absolute;
+  z-index: 4;
+  top: -0.35rem;
+  right: 3.5rem;
+  width: 7rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--card-brass), transparent);
+  content: "";
+  pointer-events: none;
+}
+
+#overlay-card .logo-section {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 2rem;
+  overflow: hidden;
+  border-left: 1px solid var(--card-line);
+  border-radius: 0 0.15rem 0 0;
+  background:
+    linear-gradient(180deg, transparent 43%, rgb(12 10 8 / 78%) 100%),
+    url("assets/cover-cropped.jpg") center 34% / cover no-repeat;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 10%);
+  opacity: 0.94;
+}
+
+#overlay-card .logo-section::after {
+  content: none;
+}
+
+#overlay-card .logo-mark {
+  display: none;
+}
+
+#overlay-card .logo-mark::before,
+#overlay-card .logo-mark::after {
+  content: none;
+}
+
+#overlay-card .brand-name {
+  margin: 0;
+  color: #fff;
+  direction: ltr;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(2.2rem, 3.2vw, 3.3rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 0.85;
+  text-shadow: 0 2px 18px rgb(0 0 0 / 45%);
+}
+
+#overlay-card .brand-name::first-letter {
+  font-style: italic;
+}
+
+#overlay-card .brand-tagline {
+  margin: 0.65rem 0 0;
+  color: rgb(255 255 255 / 72%);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+}
+
+#overlay-card .contact-section {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2.25rem clamp(1.65rem, 3vw, 2.75rem);
+  border-radius: 1.45rem 0 1.45rem 0;
+  background:
+    linear-gradient(145deg, rgb(39 35 30 / 68%), rgb(14 13 12 / 58%));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 15%);
+}
+
+#overlay-card .contact-section h2 {
+  position: relative;
+  margin: 0 0 1.25rem;
+  color: #fff;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.55rem, 2.3vw, 2.15rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+#overlay-card .contact-section h2::after {
+  display: inline-block;
+  width: 2.75rem;
+  height: 1px;
+  margin-inline-start: 0.8rem;
+  background: var(--card-brass);
+  content: "";
+  vertical-align: middle;
+}
+
+#overlay-card .contact-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#overlay-card .contact-list li {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 1.8rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--card-line);
+}
+
+#overlay-card .contact-list li:last-child {
+  border-bottom: 0;
+}
+
+#overlay-card .contact-icon {
+  width: 1.8rem;
+  height: 1.8rem;
+  border: 1px solid rgb(225 189 135 / 42%);
+  border-radius: 50%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 0.85rem;
+  opacity: 0.86;
+}
+
+#overlay-card .contact-icon.phone {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e1bd87' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z'/%3E%3C/svg%3E");
+}
+
+#overlay-card .contact-icon.email {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e1bd87' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 5h18v14H3z'/%3E%3Cpath d='M3 6l9 7 9-7'/%3E%3C/svg%3E");
+}
+
+#overlay-card .contact-icon.whatsapp {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e1bd87' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.5 11.6a8.5 8.5 0 01-12.6 7.5L3 20.5l1.4-4.7a8.5 8.5 0 1116.1-4.2z'/%3E%3Cpath d='M8.3 7.5c.4 3.7 2.5 5.8 6.2 6.2'/%3E%3C/svg%3E");
+}
+
+#overlay-card .contact-label {
+  margin-bottom: 0.12rem;
+  color: var(--card-muted);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+#overlay-card .contact-value {
+  min-width: 0;
+  color: var(--card-ink);
+  font-size: clamp(0.72rem, 1.1vw, 0.85rem);
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+#overlay-card .contact-value a {
+  color: inherit;
+  text-decoration: none;
+  text-decoration-color: rgb(142 112 76 / 55%);
+  text-underline-offset: 0.2rem;
+  transition: color 180ms ease, text-decoration-color 180ms ease;
+}
+
+#overlay-card .contact-value a:hover {
+  color: var(--card-brass);
+  text-decoration: underline;
+}
+
+#overlay-card .contact-phones-wrap {
+  min-width: 0;
+}
+
+#overlay-card .contact-phones-inline {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+}
+
+#overlay-card .contact-phones-inline > div {
+  min-width: 0;
+}
+
+#overlay-card .contact-wa-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+#overlay-card .contact-wa-link-icon {
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: var(--card-brass);
+}
+
+#overlay-card .contact-value a:focus-visible,
+#overlay-card .contact-wa-link:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--card-brass);
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  #overlay-card {
+    padding: 6.5rem 1.25rem 1.5rem;
+  }
+
+  #overlay-card .card {
+    width: min(88%, 36rem);
+    min-height: 0;
+    grid-template-columns: 1fr;
+    margin: auto;
+    overflow: hidden;
+    border-radius: 1px 1.15rem 1px 1.15rem;
+    translate: 0 -40%;
+    transform-origin: center;
+  }
+
+  #overlay-card .logo-section {
+    min-height: 12rem;
+    padding: 1.35rem 1.5rem;
+    border-bottom: 1px solid var(--card-line);
+    border-left: 0;
+  }
+
+  #overlay-card .brand-name {
+    font-size: 2rem;
+  }
+
+  #overlay-card .contact-section {
+    padding: 1.25rem 1.5rem 1.4rem;
+  }
+
+  #overlay-card .contact-section h2 {
+    margin-bottom: 0.65rem;
+    font-size: 1.65rem;
+  }
+
+  #overlay-card .contact-list li {
+    padding: 0.55rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  #overlay-card {
+    align-items: center;
+    padding: 5rem 1rem 1rem;
+  }
+
+  #overlay-card .card {
+    overflow: hidden;
+    box-shadow:
+      1rem 1.5rem 3rem rgb(43 32 20 / 24%),
+      0 3rem 5rem rgb(27 22 16 / 17%);
+  }
+
+  #overlay-card .logo-section {
+    min-height: 10.5rem;
+    padding: 1rem 1.15rem;
+  }
+
+  #overlay-card .brand-name {
+    font-size: 1.75rem;
+  }
+
+  #overlay-card .brand-tagline {
+    margin-top: 0.4rem;
+  }
+
+  #overlay-card .contact-section {
+    padding: 0.9rem 1.15rem 1rem;
+  }
+
+  #overlay-card .contact-section h2 {
+    margin-bottom: 0.4rem;
+    font-size: 1.45rem;
+  }
+
+  #overlay-card .contact-list li {
+    grid-template-columns: 1.55rem minmax(0, 1fr);
+    gap: 0.65rem;
+    padding: 0.45rem 0;
+  }
+
+  #overlay-card .contact-icon {
+    width: 1.55rem;
+    height: 1.55rem;
+    background-size: 0.72rem;
+  }
+
+  #overlay-card .contact-label {
+    font-size: 0.55rem;
+  }
+
+  #overlay-card .contact-value {
+    font-size: 0.7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #overlay-card .card,
+  #overlay-card .card:hover,
+  #overlay-card.is-active .card {
+    transition: none;
+    transform: none;
+  }
+}

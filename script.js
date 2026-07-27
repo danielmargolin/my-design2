@@ -29,7 +29,7 @@ let lastOverlayFrame = -1;
  */
 const OVERLAY_FRAMES = {
   "overlay-lets-go": { from: 1, to: 40 },
-  "overlay-example-b": { from: 150, to: 210 }
+  "overlay-card": { from: 150, to: 210 }
 };
 
 /**
