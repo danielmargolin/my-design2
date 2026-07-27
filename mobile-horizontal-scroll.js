@@ -1,6 +1,6 @@
 /**
  * On mobile, map horizontal gestures to vertical page scroll:
- * scroll left → scroll up, scroll right → scroll down.
+ * scroll left → scroll down, scroll right → scroll up.
  */
 (function () {
   const MOBILE_BREAKPOINT = 767;
@@ -62,8 +62,8 @@
 
     window.dispatchEvent(new Event("sequence:scroll-interrupt"));
 
-    // deltaX < 0 (left) decreases Y; deltaX > 0 (right) increases Y.
-    withInstantScroll(() => setScrollY(getScrollY() + deltaX));
+    // deltaX < 0 (left) increases Y; deltaX > 0 (right) decreases Y.
+    withInstantScroll(() => setScrollY(getScrollY() - deltaX));
   }
 
   window.addEventListener(

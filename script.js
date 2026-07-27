@@ -108,6 +108,72 @@ const overlays = Object.entries(OVERLAY_FRAMES).flatMap(([id, range]) => {
   return [{ id, element, from, to }];
 });
 
+
+/**
+ * Gallery images use data-src so they are not fetched while the overlay is
+ * hidden (native loading="lazy" still treats fixed overlays as in-viewport).
+ * Load each image when it enters the gallery grid scrollport.
+ */
+const galleryGrid = document.querySelector("#overlay-gallery .gallery-grid");
+let galleryLazyObserver = null;
+
+function hydrateGalleryImage(img) {
+  const src = img.getAttribute("data-src");
+  if (!src) {
+    return;
+  }
+
+  img.src = src;
+  img.removeAttribute("data-src");
+}
+
+function ensureGalleryLazyObserver() {
+  if (galleryLazyObserver || !galleryGrid) {
+    return galleryLazyObserver;
+  }
+
+  galleryLazyObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) {
+          continue;
+        }
+
+        const img = entry.target;
+        hydrateGalleryImage(img);
+        galleryLazyObserver.unobserve(img);
+      }
+    },
+    {
+      root: galleryGrid,
+      rootMargin: "120px 0px",
+      threshold: 0.01
+    }
+  );
+
+  return galleryLazyObserver;
+}
+
+function syncGalleryLazyLoad(isActive) {
+  if (!galleryGrid) {
+    return;
+  }
+
+  const observer = ensureGalleryLazyObserver();
+  if (!observer) {
+    return;
+  }
+
+  const pending = galleryGrid.querySelectorAll("img[data-src]");
+
+  if (!isActive) {
+    pending.forEach((img) => observer.unobserve(img));
+    return;
+  }
+
+  pending.forEach((img) => observer.observe(img));
+}
+
 function syncOverlays(frameIndex) {
   // playhead is 0-based; OVERLAY_FRAMES from/to are 1-based frame file numbers
   const frameNumber = frameIndex + 1;
@@ -128,6 +194,10 @@ function syncOverlays(frameIndex) {
 
     element.classList.toggle("is-active", isActive);
     element.setAttribute("aria-hidden", String(!isActive));
+
+    if (element.id === "overlay-gallery") {
+      syncGalleryLazyLoad(isActive);
+    }
   }
 }
 
