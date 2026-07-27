@@ -59,23 +59,11 @@
       display: block;
     }
 
-    /* Soft wash + light vignette — hides blockiness without crushing the image */
     .sequence__grade {
       position: absolute;
       inset: 0;
       z-index: 1;
       pointer-events: none;
-      background:
-        radial-gradient(ellipse 75% 70% at 50% 45%,
-          transparent 0%,
-          rgba(12, 11, 10, 0.18) 72%,
-          rgba(8, 7, 6, 0.32) 100%),
-        linear-gradient(180deg,
-          rgba(20, 18, 16, 0.1) 0%,
-          transparent 30%,
-          transparent 70%,
-          rgba(20, 18, 16, 0.14) 100%),
-        rgba(16, 14, 12, 0.1);
     }
 
     .site-header {
@@ -350,6 +338,83 @@
       opacity: 0;
     }
 
+    .sequence__next {
+      position: absolute;
+      inset-inline-start: 50%;
+      bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px));
+      z-index: 5;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      padding: 12px 22px;
+      border: 1px solid rgba(247, 243, 235, 0.28);
+      border-radius: 2px;
+      background:
+        linear-gradient(120deg,
+          rgba(255, 252, 246, 0.08) 0%,
+          transparent 50%),
+        rgba(22, 20, 17, 0.55);
+      backdrop-filter: blur(14px) saturate(1.1);
+      -webkit-backdrop-filter: blur(14px) saturate(1.1);
+      box-shadow:
+        0 14px 32px rgba(8, 7, 6, 0.22),
+        inset 0 1px 0 rgba(255, 252, 246, 0.1);
+      color: rgba(247, 243, 235, 0.92);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      line-height: 1;
+      cursor: pointer;
+      transform: translateX(-50%);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition:
+        opacity 400ms ease,
+        visibility 400ms ease,
+        background-color 220ms ease,
+        border-color 220ms ease,
+        transform 220ms ease,
+        box-shadow 220ms ease;
+    }
+
+    .sequence.is-ready .sequence__next.is-visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .sequence__next:hover,
+    .sequence__next:focus-visible {
+      background:
+        linear-gradient(120deg,
+          rgba(255, 252, 246, 0.12) 0%,
+          transparent 50%),
+        rgba(22, 20, 17, 0.68);
+      border-color: rgba(247, 243, 235, 0.55);
+      transform: translateX(-50%) translateY(-2px);
+      box-shadow:
+        0 18px 36px rgba(8, 7, 6, 0.28),
+        inset 0 1px 0 rgba(255, 252, 246, 0.14);
+    }
+
+    .sequence__next-icon {
+      display: block;
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 720px) {
+      .sequence__next {
+        bottom: max(18px, calc(env(safe-area-inset-bottom) + 12px));
+        padding: 11px 18px;
+        font-size: 12px;
+      }
+    }
+
     .sequence__fallback {
       display: none;
       object-fit: contain;
@@ -500,7 +565,8 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .sequence__hint {
+      .sequence__hint,
+      .sequence__next {
         display: none;
       }
 
@@ -592,6 +658,13 @@
       </aside>
 
       <p class="sequence__hint">גללו כדי לחקור</p>
+
+      <button type="button" class="sequence__next" id="sequence-next" hidden aria-label="המשך לחלק הבא">
+        <span class="sequence__next-label">המשך</span>
+        <svg class="sequence__next-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M8 11.2 2.8 6l1.1-1.1L8 9 12.1 4.9 13.2 6 8 11.2Z" />
+        </svg>
+      </button>
     </section>
   </main>
 
@@ -600,6 +673,7 @@
       .sequence__canvas,
       .loader,
       .sequence__hint,
+      .sequence__next,
       .overlay {
         display: none;
       }
@@ -633,6 +707,11 @@
       const loaderStatus = section.querySelector(".loader__status");
       const overlays = Array.from(section.querySelectorAll("[data-overlay]"));
       const frameLinks = Array.from(document.querySelectorAll("[data-scroll-frame]"));
+      const nextButton = section.querySelector("#sequence-next");
+      const nextStops = overlays
+        .map((overlay) => Number(overlay.dataset.frame))
+        .filter((frame) => Number.isFinite(frame))
+        .sort((a, b) => a - b);
       const frames = new Array(FRAME_COUNT);
       const playhead = { frame: 0 };
 
@@ -642,6 +721,7 @@
       let failedCount = 0;
       let lastDrawnFrame = -1;
       let lastOverlayFrame = -1;
+      let lastNextTarget = undefined;
       let resizeFrame = 0;
       let sequenceTween = null;
       let scrollTween = null;
@@ -672,6 +752,30 @@
         return null;
       }
 
+      function getNextTargetFrame(frameIndex) {
+        for (const stop of nextStops) {
+          if (frameIndex < stop) return stop;
+        }
+        return null;
+      }
+
+      function updateNextButton(frameIndex) {
+        const target = getNextTargetFrame(frameIndex);
+        if (target === lastNextTarget) return;
+        lastNextTarget = target;
+
+        if (target == null) {
+          nextButton.hidden = true;
+          nextButton.classList.remove("is-visible");
+          nextButton.removeAttribute("data-scroll-frame");
+          return;
+        }
+
+        nextButton.hidden = false;
+        nextButton.classList.add("is-visible");
+        nextButton.dataset.scrollFrame = String(target);
+      }
+
       function updateOverlays(frameIndex) {
         if (frameIndex === lastOverlayFrame) return;
         lastOverlayFrame = frameIndex;
@@ -688,6 +792,7 @@
         }
 
         section.classList.toggle("has-overlay", anyVisible);
+        updateNextButton(frameIndex);
       }
 
       function render(force = false) {
@@ -786,6 +891,13 @@
             scrollToFrame(frame);
           });
         }
+
+        nextButton.addEventListener("click", (event) => {
+          const frame = Number(nextButton.dataset.scrollFrame);
+          if (!Number.isFinite(frame)) return;
+          event.preventDefault();
+          scrollToFrame(frame);
+        });
       }
 
       function setupSequence() {
