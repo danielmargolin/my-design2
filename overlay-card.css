@@ -529,25 +529,13 @@
 #overlay-gallery .gallery-card__header {
   position: relative;
   z-index: 1;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
   padding-inline: 0.35rem;
-}
-
-#overlay-gallery .gallery-card__header p {
-  margin: 0;
-  color: var(--gallery-muted);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
 }
 
 #overlay-gallery .gallery-card__header h2 {
   margin: 0;
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(2rem, 3.5vw, 3.35rem);
+  font-size: clamp(1.75rem, 3vw, 2.75rem);
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 0.95;
@@ -557,7 +545,7 @@
   position: relative;
   z-index: 1;
   display: grid;
-  height: min(56vh, 34rem);
+  height: min(46vh, 28rem);
   grid-auto-rows: minmax(9rem, 1fr);
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(0.5rem, 1vw, 0.85rem);
@@ -611,21 +599,15 @@
   }
 
   #overlay-gallery .gallery-card__header {
-    display: block;
     padding: 0 0.2rem;
   }
 
-  #overlay-gallery .gallery-card__header p {
-    margin-bottom: 0.2rem;
-    font-size: 0.62rem;
-  }
-
   #overlay-gallery .gallery-card__header h2 {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
 
   #overlay-gallery .gallery-grid {
-    height: min(66vh, 35rem);
+    height: min(54vh, 30rem);
     grid-auto-rows: minmax(7.5rem, 1fr);
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.55rem;

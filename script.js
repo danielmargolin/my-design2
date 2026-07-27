@@ -425,3 +425,11 @@ window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).addEventListener(
   "change",
   () => window.location.reload()
 );
+
+// Horizontal gesture remapping (mobile-horizontal-scroll.js) interrupts jumps.
+window.addEventListener("sequence:scroll-interrupt", () => {
+  if (frameScrollTween) {
+    frameScrollTween.kill();
+    frameScrollTween = null;
+  }
+});
