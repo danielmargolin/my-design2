@@ -24,7 +24,7 @@ html {
 }
 
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: Heebo, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .site-header {
@@ -37,7 +37,7 @@ body {
   min-height: 76px;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 0.8rem 0.75rem 1.35rem;
+  padding: 0.75rem 1.35rem 0.75rem 0.8rem;
   border: 1px solid var(--header-border);
   border-radius: 1rem;
   background: var(--header-bg);
@@ -93,11 +93,10 @@ body {
   align-self: start;
   margin-top: 0.3rem;
   color: var(--muted);
-  font-size: 0.58rem;
+  font-size: 0.68rem;
   font-weight: 600;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.08em;
   line-height: 1;
-  text-transform: uppercase;
 }
 
 .site-nav {
@@ -119,11 +118,10 @@ body {
   border: 1px solid transparent;
   border-radius: 0.7rem;
   color: #d6d3cc;
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.04em;
   text-decoration: none;
-  text-transform: uppercase;
   transition:
     color 180ms ease,
     border-color 180ms ease,
@@ -137,6 +135,7 @@ body {
   stroke: currentColor;
   stroke-linecap: square;
   stroke-width: 1.25;
+  transform: scaleX(-1);
   transition: transform 180ms ease;
 }
 
@@ -148,7 +147,7 @@ body {
 }
 
 .site-nav__link:hover svg {
-  transform: translateX(3px);
+  transform: translateX(-3px) scaleX(-1);
 }
 
 .site-nav__link--primary {
@@ -182,7 +181,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  padding: 0.55rem 0.6rem 0.55rem 1.6rem;
+  padding: 0.55rem 1.6rem 0.55rem 0.6rem;
   overflow: hidden;
   border: 1px solid rgb(217 185 140 / 52%);
   border-radius: 1rem;
@@ -193,9 +192,8 @@ body {
     inset 0 1px 0 rgb(255 255 255 / 7%);
   color: var(--warm-white);
   cursor: pointer;
-  font: 600 0.82rem/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font: 600 0.95rem/1 Heebo, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  letter-spacing: 0.06em;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   transform: translateX(-50%);
@@ -234,6 +232,7 @@ body {
   stroke: currentColor;
   stroke-linecap: square;
   stroke-width: 1.35;
+  transform: scaleX(-1);
 }
 
 .floating-cta:hover {
@@ -247,7 +246,7 @@ body {
 
 .floating-cta:hover .floating-cta__icon {
   background: #e7c99f;
-  transform: translateX(2px);
+  transform: translateX(-2px);
 }
 
 @keyframes cta-arrive {
@@ -302,7 +301,7 @@ body {
   gap: 0.75rem;
   background: rgb(5 5 5 / 35%);
   color: #fff;
-  font: 500 0.875rem/1.2 system-ui, sans-serif;
+  font: 500 0.875rem/1.2 Heebo, system-ui, sans-serif;
   letter-spacing: 0.02em;
   transition: opacity 250ms ease, visibility 250ms ease;
 }
@@ -332,7 +331,7 @@ body {
     top: 0.75rem;
     width: calc(100% - 1.25rem);
     min-height: 64px;
-    padding: 0.55rem 0.55rem 0.55rem 0.85rem;
+    padding: 0.55rem 0.85rem 0.55rem 0.55rem;
     border-radius: 0.85rem;
   }
 
@@ -351,7 +350,7 @@ body {
   }
 
   .brand__descriptor {
-    font-size: 0.48rem;
+    font-size: 0.58rem;
   }
 
   .menu-toggle {
@@ -359,7 +358,7 @@ body {
     order: 3;
     width: 42px;
     height: 42px;
-    margin-left: 0.45rem;
+    margin-inline-start: 0.45rem;
     padding: 11px 9px;
     border: 1px solid rgb(255 255 255 / 12%);
     border-radius: 0.7rem;
@@ -392,7 +391,7 @@ body {
   .site-nav {
     position: static;
     display: flex;
-    margin-left: auto;
+    margin-inline-start: auto;
   }
 
   .site-nav__link:first-child {
@@ -421,17 +420,17 @@ body {
   .site-nav__link {
     min-height: 42px;
     padding: 0 0.85rem;
-    font-size: 0.63rem;
+    font-size: 0.75rem;
   }
 
   .site-nav__link svg {
-    margin-left: auto;
+    margin-inline-start: auto;
   }
 
   .floating-cta {
     min-width: 11.5rem;
     min-height: 3.85rem;
-    padding-left: 1.35rem;
+    padding-inline-end: 1.35rem;
   }
 
   .floating-cta__icon {

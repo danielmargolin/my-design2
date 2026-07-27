@@ -26,7 +26,7 @@ function setMenuOpen(isOpen) {
   menuToggle.setAttribute("aria-expanded", String(isOpen));
   menuToggle.setAttribute(
     "aria-label",
-    isOpen ? "Close navigation menu" : "Open navigation menu"
+    isOpen ? "סגור תפריט ניווט" : "פתח תפריט ניווט"
   );
 }
 
@@ -107,7 +107,7 @@ function renderFrame() {
 function updateLoadingStatus() {
   loadedCount += 1;
   const progress = Math.round((loadedCount / FRAME_COUNT) * 100);
-  status.textContent = `Loading frames… ${progress}%`;
+  status.textContent = `טוען פריימים… ${progress}%`;
 }
 
 function loadFrame(index) {
@@ -134,7 +134,7 @@ function loadFrame(index) {
 
 function startSequence() {
   if (!window.gsap || !window.ScrollTrigger) {
-    status.textContent = "The animation could not start.";
+    status.textContent = "לא ניתן להפעיל את האנימציה.";
     return;
   }
 
