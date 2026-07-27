@@ -4,7 +4,6 @@ const MOBILE_BREAKPOINT = 767;
 const sequence = document.querySelector(".sequence");
 const stage = document.querySelector(".sequence__stage");
 const canvas = document.querySelector(".sequence__canvas");
-const loader = document.querySelector(".sequence__loader");
 const status = document.querySelector(".sequence__status");
 const context = canvas.getContext("2d");
 const header = document.querySelector(".site-header");
@@ -313,8 +312,7 @@ function renderFrame() {
 function updateLoadingStatus() {
   loadedCount += 1;
   const progress = Math.round((loadedCount / FRAME_COUNT) * 100);
-  status.textContent = `${progress}%`;
-  loader.style.setProperty("--load-progress", `${progress}%`);
+  status.textContent = `טוען פריימים… ${progress}%`;
 }
 
 function loadFrame(index) {
