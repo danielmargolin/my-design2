@@ -233,8 +233,11 @@ function scrollToOverlay(id) {
   scrollToFrame(range.from);
 }
 
-floatingCta.addEventListener("click", () => {
-  // First overlay after the intro CTA — its `from` is the jump target
+/**
+ * Jump past the intro CTA to the first content overlay (contact card).
+ * Shared by the floating CTA and the nav "צרו קשר" link.
+ */
+function scrollToFirstContentOverlay() {
   const firstOverlayId = Object.keys(OVERLAY_FRAMES).find(
     (id) => id !== "overlay-lets-go"
   );
@@ -242,6 +245,19 @@ floatingCta.addEventListener("click", () => {
   if (firstOverlayId) {
     scrollToOverlay(firstOverlayId);
   }
+}
+
+floatingCta.addEventListener("click", scrollToFirstContentOverlay);
+
+document.querySelectorAll("[data-scroll-overlay]").forEach((link) => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    setMenuOpen(false);
+    const id = link.getAttribute("data-scroll-overlay");
+    if (id) {
+      scrollToOverlay(id);
+    }
+  });
 });
 
 function frameUrl(index) {
