@@ -21,6 +21,7 @@ const playhead = { frame: 0 };
 let loadedCount = 0;
 let lastDrawnFrame = -1;
 let lastOverlayFrame = -1;
+let sequenceTrigger = null;
 
 /**
  * Overlay frame ranges — single source of truth (1-based, inclusive).
@@ -110,11 +111,46 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+/**
+ * Scroll the sequence so playhead lands on a 1-based frame number.
+ */
+function scrollToFrame(frameNumber) {
+  if (!sequenceTrigger) {
+    return;
+  }
+
+  const frameIndex = Math.max(0, Math.min(FRAME_COUNT - 1, frameNumber - 1));
+  const progress = frameIndex / (FRAME_COUNT - 1);
+  const scrollY =
+    sequenceTrigger.start +
+    (sequenceTrigger.end - sequenceTrigger.start) * progress;
+
+  window.scrollTo({ top: scrollY, behavior: "smooth" });
+}
+
+/**
+ * Jump to an overlay's first frame (`OVERLAY_FRAMES[id].from`).
+ */
+function scrollToOverlay(id) {
+  const range = OVERLAY_FRAMES[id];
+
+  if (!range) {
+    console.warn("[overlays] scroll target missing for", id);
+    return;
+  }
+
+  scrollToFrame(range.from);
+}
+
 floatingCta.addEventListener("click", () => {
-  window.scrollBy({
-    top: window.innerHeight * 0.85,
-    behavior: "smooth"
-  });
+  // First overlay after the intro CTA — its `from` is the jump target
+  const firstOverlayId = Object.keys(OVERLAY_FRAMES).find(
+    (id) => id !== "overlay-lets-go"
+  );
+
+  if (firstOverlayId) {
+    scrollToOverlay(firstOverlayId);
+  }
 });
 
 function frameUrl(index) {
@@ -202,7 +238,7 @@ function startSequence() {
   resizeCanvas();
   sequence.classList.add("is-ready");
 
-  gsap.to(playhead, {
+  const tween = gsap.to(playhead, {
     frame: FRAME_COUNT - 1,
     ease: "none",
     snap: "frame",
@@ -216,6 +252,8 @@ function startSequence() {
       invalidateOnRefresh: true
     }
   });
+
+  sequenceTrigger = tween.scrollTrigger;
 }
 
 Promise.all(Array.from({ length: FRAME_COUNT }, (_, index) => loadFrame(index)))
